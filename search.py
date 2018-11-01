@@ -131,8 +131,23 @@ def breadthFirstSearch(problem):
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    fringe_list=util.PriorityQueue();
+    closed_list=set();
+    start=(problem.getStartState(),0,[]);
+    fringe_list.push(start,0);
+
+    while not fringe_list.isEmpty():
+        (node,path_cost,path)=fringe_list.pop();
+        if problem.isGoalState(node):
+            return path;
+        if not node in closed_list:
+            closed_list.add(node);
+            for child_node,child_cost,child_path in problem.getSuccessors():
+                new_cost = path_cost + child_cost;
+                new_path = path + [child_path];
+                new_state = (child_node, child_cost, child_path);
+                fringe_list.push(new_state,new_cost);
+
 
 def nullHeuristic(state, problem=None):
     """
@@ -143,8 +158,7 @@ def nullHeuristic(state, problem=None):
 
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+   
 
 
 # Abbreviations
