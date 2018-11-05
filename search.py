@@ -87,71 +87,97 @@ def depthFirstSearch(problem):
     print "Is the start a goal?", problem.isGoalState(problem.getStartState())
     print "Start's successors:", problem.getSuccessors(problem.getStartState())
     """
-    fringe = util.Stack()
-    closed = set()
-    start = (problem.getStartState(), 0, [])  # (node, cost, path) #tupple
-    fringe.push(start)
+    fringe_list = util.Stack();
+    closed_list = set();
+    start = (problem.getStartState(),[],0);
+    fringe_list.push(start);
+    fringe_node = set();
+    fringe_node.add(problem.getStartState());
 
-    while not fringe.isEmpty():
-        (node, cost, path) = fringe.pop()
-
+    while not fringe_list.isEmpty():
+        (node, path, path_cost) = fringe_list.pop();
         if problem.isGoalState(node):
-            return path
-
-        if not node in closed:
-            closed.add(node)
-
+            return path;
+        if not node in closed_list:
+            closed_list.add(node);
+            fringe_node.discard(node);
             for child_node, child_action, child_cost in problem.getSuccessors(node):
-                new_cost = cost + child_cost
-                new_path = path + [child_action]
-                new_state = (child_node, new_cost, new_path)
-                fringe.push(new_state)
+                new_cost = path_cost+child_cost;
+                new_path = path + [child_action];
+                new_state = (child_node, new_path, new_cost);
+                if not child_node in closed_list:
+                    if not child_node in fringe_node:
+                        fringe_list.push(new_state);
+                        fringe_node.add(child_node);
 
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
-    fringe = util.Queue()
-    closed = set()
-    start = (problem.getStartState(), 0, [])  # (node, cost, path)
-    fringe.push(start)
-
-    while not fringe.isEmpty():
-        (node, cost, path) = fringe.pop()
-
+    fringe_list = util.Queue();
+    closed_list = set();
+    start = (problem.getStartState(), [],0);
+    fringe_list.push(start);
+    fringe_node = set();
+    fringe_node.add(problem.getStartState());
+    while not fringe_list.isEmpty():
+        (node, path, path_cost) = fringe_list.pop();
         if problem.isGoalState(node):
-            return path
-
-        if not node in closed:
-            closed.add(node)
-
+            return path;
+        if not node in closed_list:
+            closed_list.add(node);
+            fringe_node.discard(node);
             for child_node, child_action, child_cost in problem.getSuccessors(node):
-                new_cost = cost + child_cost
-                new_path = path + [child_action]
-                new_state = (child_node, new_cost, new_path)
-                fringe.push(new_state)
+                new_cost = path_cost + child_cost;
+                new_path = path + [child_action];
+                new_state = (child_node, new_path, new_cost);
+                if not child_node in closed_list:
+                    if not child_node in fringe_node:
+                        fringe_list.push(new_state);
+                        fringe_node.add(child_node);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
-    fringe = util.PriorityQueue()
-    closed = set()
-    start = (problem.getStartState(), 0, [])  # (node, cost, path)
-    fringe.push(start, 0)
+    fringe_list = util.PriorityQueue();
 
-    while not fringe.isEmpty():
-        (node, cost, path) = fringe.pop()
+    closed_list = set();
+    start = (problem.getStartState(),[],0);
+    fringe_list.push(start, 0);
+    fringe_node = set();
+    fringe_node.add(problem.getStartState());
 
+    while not fringe_list.isEmpty():
+        (node, path, path_cost) = fringe_list.pop();
         if problem.isGoalState(node):
-            return path
-
-        if not node in closed:
-            closed.add(node)
-
+            return path;
+        if not node in closed_list:
+            closed_list.add(node);
+            fringe_node.discard(node);
             for child_node, child_action, child_cost in problem.getSuccessors(node):
-                new_cost = cost + child_cost
-                new_path = path + [child_action]
-                new_state = (child_node, new_cost, new_path)
-                fringe.push(new_state, new_cost)
+                new_cost = path_cost + child_cost;
+                new_path = path + [child_action];
+                new_state = (child_node, new_path, new_cost);
+                if not child_node in closed_list:
+                    if child_node in fringe_node:
+                        update(new_state, new_cost);
+                    elif not child_node in fringe_node:
+                        fringe_list.push(new_state, new_cost);
+                        fringe_node.add(child_node);
+
 
 
 def nullHeuristic(state, problem=None):
@@ -163,28 +189,32 @@ def nullHeuristic(state, problem=None):
 
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
-    fringe = util.PriorityQueue()
-    new_cost = 0
-    closed = set()
-    start = (problem.getStartState(), 0, [])  # (node, cost, path)
-    new_cost = heuristic(start[0], problem)
-    fringe.push(start, new_cost)
+    fringe_list = util.PriorityQueue();
+    new_cost = 0;
+    closed_list = set();
+    start = (problem.getStartState(), [],0);
+    new_cost = heuristic(start[0], problem);
+    fringe_list.push(start, new_cost);
+    fringe_node = set()
+    fringe_node.add(problem.getStartState());
 
-    while not fringe.isEmpty():
-        (node, cost, path) = fringe.pop()
-
+    while not fringe_list.isEmpty():
+        (node, path,path_cost) = fringe_list.pop();
         if problem.isGoalState(node):
-            return path
-
-        if not node in closed:
-            closed.add(node)
-
+            return path;
+        if not node in closed_list:
+            closed_list.add(node);
+            fringe_node.discard(node);
             for child_node, child_action, child_cost in problem.getSuccessors(node):
-                new_cost = cost + child_cost
-                new_path = path + [child_action]
-                new_state = (child_node, new_cost, new_path)
-                new_cost = new_cost + heuristic(new_state[0], problem)
-                fringe.push(new_state, new_cost)
+                new_cost = path_cost + child_cost;
+                new_path = path + [child_action];
+                new_state = (child_node, new_path, new_cost);
+                new_cost = new_cost + heuristic(new_state[0], problem);
+                if not child_node in closed_list:
+                    if child_node in fringe_node:
+                        update(new_state, new_cost);
+                    elif not child_node in fringe_node:
+                        fringe_list.push(new_state, new_cost);
 
 
 # Abbreviations
